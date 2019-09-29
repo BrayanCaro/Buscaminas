@@ -74,6 +74,14 @@ public class Menu {
 	}
 
 	/**
+	 * Imprime la excepcion pasada como parametro.
+	 * @param ex La excepcion.
+	 */
+	public void impError(Exception ex) {
+		impError(ex.getMessage());
+	}
+
+	/**
 	 * Imprime el mensaje de error pasado como parametro.
 	 * @param s el mensaje de error.
 	 */
@@ -183,6 +191,53 @@ public class Menu {
 	}
 
 	/**
+	 * Pregunta por entrada de alguno de las cadenas especificas
+	 * @param s el mensaje que vera el usuario.
+	 * @param cs las cadenas a esoger
+	 * @return la entrada del usuario.
+	 */
+	public String inputStringSelect(String s, String... cs) {
+		boolean found;
+		String in = "";
+
+		do {
+			found = false;
+			System.out.print(s + ": ");
+
+			String m = s + "(";
+			for (String c : cs)
+				m += c + ", ";
+			m = m.substring(0, m.length() - 2) + "): ";
+
+			impTitulo();
+			impDes();
+			impIns();
+
+			System.out.println();
+			System.out.print(m);
+
+			//^D
+			try {
+				in = scanner.next();
+			} catch (NoSuchElementException ex) {
+				System.exit(0);
+			}
+
+			for (String c : cs)
+				if (c.equals(in)) {
+					found = true;
+					break;
+				}
+
+			if (!found)
+				impError("Entrada invalida");
+
+		} while (!found);
+		return in;
+	}
+
+
+	/**
 	 * Pregunta por entrada de un número entero al usuario con un pequeño
 	 * mensaje.
 	 * @param s el mensaje que vera el usuario.
@@ -234,7 +289,7 @@ public class Menu {
 			impTitulo();
 			impDes();
 			impIns();
-			
+
 			System.out.println();
 			System.out.print(s + "(" + min + "-" + max + "): ");
 
@@ -322,43 +377,41 @@ public class Menu {
 	 * Asigna el titulo.
 	 * @param t el titulo.
 	 */
-	public void setTitulo(String t) {
-		titulo = t;
-	}
+	public void setTitulo(String t) { titulo = t; }
+
 	/**
 	 * Asigna la descripcion.
 	 * @param d la descripcion.
 	 */
-	public void setDes(String d) {
-		descripcion = d;
-	}
+	public void setDes(String d) { descripcion = d; }
+
 	/**
 	 * Asigna la instruccion.
 	 * @param i la instruccion.
 	 */
-	public void setIns(String i) {
-		instruccion = i;
-	}
+	public void setIns(String i) { instruccion = i; }
+
+	/**
+	 * Asigna las opciones.
+	 * @param o las opciones.
+	 */
+	public void setOpciones(String[] o) { opciones = o; }
 
 	/**
 	 * Regresa el titulo actual.
 	 * @return el titulo actual.
 	 */
-	public String getTitulo() {
-		return titulo;
-	}
+	public String getTitulo() { return titulo; }
+
 	/**
 	 * Regresa la descripcion actual.
 	 * @return la descripcion actual.
 	 */
-	public String getDes() {
-		return descripcion;
-	}
+	public String getDes() { return descripcion; }
+
 	/**
 	 * Regresa la instruccion actual.
 	 * @return la instruccion actual.
 	 */
-	public String getIns() {
-		return instruccion;
-	}
+	public String getIns() { return instruccion; }
 }

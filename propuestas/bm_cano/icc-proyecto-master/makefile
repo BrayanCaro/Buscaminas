@@ -16,7 +16,7 @@ clean:
 
 compile:
 	mkdir -p \$(build)
-	javac -d \$(build) -sourcepath \$(src) \$(src)/buscaminas/vista/Main.java
+	javac -d \$(build) -sourcepath \$(src) \$(src)/buscaminas/vista/Main.java -Xlint:unchecked
 
 doc:
 	mkdir \$(doc)
