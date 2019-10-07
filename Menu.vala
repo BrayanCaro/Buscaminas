@@ -7,7 +7,6 @@ public class Menu{
 
   public Menu(){
     this.tablero = false;
-    stdout.printf("Has creado un menú.\n");  
     bienvenida();
   }
 
@@ -58,9 +57,6 @@ public class Menu{
       datos.append(bombas);
       if (filas == 0 || columnas == 0 || bombas == 0){
         stdout.printf("Por favor ingresa números.\n"); 
-        for (int i = 0; i < datos.length(); i++) {
-          datos.nth_data(i);
-        }
       }      
       if (!verificacionDeDatos(filas,columnas,bombas)){
         for (int i = 0; i < datos.length(); i++) {
@@ -92,6 +88,5 @@ public class Menu{
 
   public static void main (){
     var manuPrueba = new Menu();
-    //  manuPrueba.inicializarTablero();
   }  
 }
