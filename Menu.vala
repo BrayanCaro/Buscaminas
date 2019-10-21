@@ -14,12 +14,13 @@ public class Menu{
     int opcion = 0;
     bool bandera = true;
     do{
-    stdout.printf("\t\t\tBuscaminas\nEscoge una opción: \n1. Jugar partida nueva.\n2. Continuar con la partida.\n3. Salir.\n");
+    stdout.printf("\t\t\tBuscaminas\nEscoge una opción: \n1. Jugar partida nueva.\n\ta)Fácil: 11x6 con 10 bombas.\n\tb)Medio: 18x10 con 35 bombas.\n\tc)Difícil: 25x14 con 75 bombas.\n2. Continuar con la partida.\n3. Salir.\n En caso de jugar una nueva partida escribe 1 x, con x el nivel de dificultad del juego.\n");
     stdin.scanf("%d", out opcion);
       switch (opcion) {
         case 1:
           {
-            inicializarTablero();
+            verificacionDeDatos(opcion);
+            //  inicializarTablero();
             break;
           }
         case 2:
@@ -70,16 +71,25 @@ public class Menu{
   * Verifica que los datos del tablero estén en un rango adecuado.
   * @return true si los datos son correctos (e imprime los datos), false si no es así.
   */
-  private bool verificacionDeDatos(int filas, int columnas, int bombas) 
-  requires(filas>7 && filas<20)
-  requires(columnas>7 && filas<20)
-  requires(bombas>4 && bombas<80){
-    print("Escogiste:\n %i filas\n %i columnas\n %i bombas\n", filas, columnas, bombas);
+  //  private bool verificacionDeDatos(int filas, int columnas, int bombas) 
+  //  requires(filas>7 && filas<20)
+  //  requires(columnas>7 && filas<20)
+  //  requires(bombas>4 && bombas<80){
+  //    print("Escogiste:\n %i filas\n %i columnas\n %i bombas\n", filas, columnas, bombas);
+  //    return true;
+  //  }
+
+  private bool verificacionDeDatos(string difiltad)
+  requires(char_count(dificultad) == 3){
     return true;
   }
   
   void inicializarTablero(){    
-      escaneoDeDatos(); 
+      //escaneoDeDatos(); 
+      string dificultad;
+      //  if (dificultad == "1 a")
+
+
     //  Escaneados los datos, crear el nuevo tablero.
   }
 
