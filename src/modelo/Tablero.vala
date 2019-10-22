@@ -13,7 +13,12 @@ protected errordomain ErrorTipo1{
 	NEGATIVOS
 }
 
+/* Tablero del buscaminas. */
 public class Tablero {
+	private Celda[,] tablero;
+	private Estado estado;
+	private int filas;
+	private int columnas;	
 
 	/* Clase interna para crear una celda. */
 	private class Celda{
@@ -62,12 +67,24 @@ public class Tablero {
 		public void aumentaMinas(){
 			this._minasAlrededor +=1;
 		}
+
+		/* Convierte en una cadena de texto la información de la celda. */
+		public void to_string(){
+			if (!presionado && !bandera){
+				stdout.printf("\033[47m\033[1;30m[  ]\033[0m");				
+			} else 
+			if (presionado && mina){
+				stdout.printf ("\033[1;30m[💣]");
+			} else 
+			if (bandera){
+				stdout.printf ("\033[1;30m[ 🚩]");
+			} else
+			if (presionado){
+				stdout.printf ("\033[42m\033[1;30m[  ]\033[0m");
+			} 
+		}
 	}
 
-	private Celda[,] tablero;
-	private Estado estado;
-	private int filas;
-	private int columnas;	
 
 	/* tablero de n x m con k minas */
 	public Tablero(int n, int m, int k) 
@@ -94,8 +111,7 @@ public class Tablero {
 		}		
 	}
 
-	/*
-	* Cambia las bombas de lugar, omite el lugar x,y.
+	/* Cambia las bombas de lugar, omite el lugar x,y.
 	* @param x: coordenada en el eje x.
 	* @param y: coordenada en el eje y.
 	* @param k: número de minas.
@@ -148,8 +164,7 @@ public class Tablero {
 		return (this.tablero[x, y]).presionado;
 	}
 
-	/*
-	* Comprueba que una casilla sea válida, es decir, que esté dentro del rango de filas y columnas y sea mayor o igual que 0.
+	/* Comprueba que una casilla sea válida, es decir, que esté dentro del rango de filas y columnas y sea mayor o igual que 0.
 	* @param x: coordenada en el eje x.
 	* @param y: coordenada en el eje y.
 	*/
@@ -173,15 +188,14 @@ public class Tablero {
 		}
 		return valida;
 	}
-	/* 
-	* Presionar casilla (x,y). Escribe un mensaje en pantalla advirtiendo que la casilla ya ha sido presionada en caso de.
+	/* Presionar casilla (x,y). Escribe un mensaje en pantalla advirtiendo que la casilla ya ha sido presionada en caso de.
 	* @param x: coordenada en el eje x.
 	* @param y: coordenada en el eje y.	
 	* @return true si se pudo presionar, false de lo contrario. 
 	*/
 	public bool presionar(int x, int y) throws ErrorTipo1{
 		if (casillaValida(x, y)){
-			if (!(this.tablero[x,y].presionado)){
+			if (!(this.tablero[x,y].presionado)){				
 				this.tablero[x,y].presionado = true;
 				return true;
 			} else {
@@ -192,8 +206,7 @@ public class Tablero {
 		return false;
 	}
 
-	/* 
-	* Poner bandera en casilla (x,y). Escribe un mensaje en pantalla advirtiendo que la casilla no puede abanderarse en caso de.
+	/* Poner bandera en casilla (x,y). Escribe un mensaje en pantalla advirtiendo que la casilla no puede abanderarse en caso de.
 	* @param x: coordenada en el eje x.
 	* @param y: coordenada en el eje y.
 	* @return true si se pudo colocar la bandera, false en caso contrario.
@@ -218,22 +231,36 @@ public class Tablero {
 		return this.estado;
 	}
 
+	/* Establece el estado del juego.
+	* @param estado: Estado del juego.
+	*/
 	public void setEstado(Estado estado){
 		this.estado = estado;
 	}
 
-	/*
-	* Devuelve el equivalente a una cadena de texto del tablero.
-	*/
+	/* Devuelve el equivalente a una cadena de texto del tablero. */
 	public void to_string (){
+		print("\n");
+		for (int i = 0; i < obtenerColumnas(); i++) {
+			if (i>9) stdout.printf (" %i ",i);
+			else stdout.printf (" %i  ",i);
+		}	
+		print("\n");
+		for (int i = 0; i < obtenerFilas(); i++) {
+			for (int j = 0; j < obtenerColumnas(); j++) {
+				tablero[i,j].to_string();
+			}
+			stdout.printf (" %i ",i);
+			print("\n");
+		}	
+		print("\n");	
+		print("\033[0m");
 	}
 
 	public static void main(string[] args) {
-		Tablero tabla = new Tablero(11,6,10);
+		Tablero tabla = new Tablero(25,14,75);
 		tabla.cambiaMinas(3,5, 10);
-		Celda m = new Celda(2,false, false, false);
-		
-		stdout.printf ("%s\n", (m.bandera).to_string());
+		tabla.to_string();
 		//  try{
 			/* Sin el try catch el programa tiene warnings. Probar las coordenadas deseadas. */
 			//  tabla.presionar(5,0);		
