@@ -1,3 +1,7 @@
+protected errordomain ErrorTipo2{
+  DATOS_INCORRECTOS
+}
+
 public class Menu{
   private bool tablero; // Se sustituye por un objeto de tipo tablero.
   //  Dificultad 
@@ -19,6 +23,7 @@ public class Menu{
   private void bienvenida(){
     bool bandera = true;
     do{
+      //  print("\033[40m");
     stdout.printf("\t\t\tBuscaminas\nEscoge una opción: \n1. Jugar partida nueva.\n\ta)Fácil: 11x6 con 10 bombas.\n\tb)Medio: 18x10 con 35 bombas.\n\tc)Difícil: 25x14 con 75 bombas.\n   En caso de jugar una nueva partida escribe 1x, con x el nivel de dificultad del juego.\n2. Continuar con la partida.\n3. Salir.\n");
     string opcion = stdin.read_line()._strip();
     opcion = verificacionDeDatos(opcion);
@@ -50,9 +55,10 @@ public class Menu{
           break;
         }
         default:
-          stdout.printf("Esa opción no existe.\n");
+          stdout.printf("\t\t\033[47m \033[1;30m Esa opción no existe. \033[0m \n\n");
         break;
       }
+      //  print("\033[0m");
     } while (bandera);    
   }
 
@@ -62,9 +68,8 @@ public class Menu{
   * @return dificultad del juego (a,b,c).
   */
   private string verificacionDeDatos(string dificultad)
-  requires(dificultad.char_count() >= 1)
-  requires(dificultad.char_count()<=2)
   ensures (result.char_count()>= 1){
+    //  print("\033[40m");
       string dificultadJuego = "";
     if (dificultad.contains("1")){
         switch(dificultad){
@@ -86,18 +91,18 @@ public class Menu{
                 dificultadJuego = "c";
                 break;
             }
-            default:
-                stdout.printf("Esa opción no existe.\n");
-                break;
         }
     } else {
         dificultadJuego = dificultad;
     }
+    //  print("\033[0m");
     return dificultadJuego;
   }
 
   public static void main (){
+    Tablero tan = new Tablero(11,8,10);
+    tan.to_string();
     var manuPrueba = new Menu();
-    stdout.printf ("Hola bola");
+
   }  
 }
