@@ -188,7 +188,7 @@ public class Tablero {
 			if (x<0 || y<0) throw new ErrorTipo1.NEGATIVOS("No se aceptan coordenadas negativas.");
 		} catch (ErrorTipo1 e){
 			if (e is ErrorTipo1.NEGATIVOS) {
-				stdout.printf ("\t\tError: %s\n", e.message);
+				stdout.printf ("\t\t"+letraNegra+"Error: %s\n", e.message);
 				valida = false;
 			}
 		}
@@ -196,7 +196,7 @@ public class Tablero {
 			if (x>=obtenerFilas() || y>= obtenerColumnas()) throw new ErrorTipo1.ARCHIVO_NO_ENCONTRADO("Coordeadas inexistentes.");
 		} catch (ErrorTipo1 e){
 			if (e is ErrorTipo1.ARCHIVO_NO_ENCONTRADO) {
-				stdout.printf ("\t\tError: %s\n", e.message);
+				stdout.printf ("\t\t"+letraNegra+"Error: %s\n", e.message);
 				valida = false;
 			}
 		}
@@ -225,7 +225,7 @@ public class Tablero {
 				}
 				return true;
 			} else {
-				stdout.printf ("\t\tEsa casilla ya está presionada.\n");
+				stdout.printf ("\t\t"+letraNegra+"Esa casilla ya está presionada.\n");
 				return false;
 			}
 		} 
@@ -250,7 +250,7 @@ public class Tablero {
 				return true;
 			} else 
 			if (tablero[x,y].presionado){
-				stdout.printf ("\t\tNo se puede colocar una bandera.\n");
+				stdout.printf ("\t\t"+letraNegra+"No se puede colocar una bandera.\n");
 				return false;				
 			}
 		}
@@ -286,7 +286,6 @@ public class Tablero {
 			stdout.printf (" %i ",i);
 			print("\n");
 		}	
-		print("\n");	
-		print("\033[0m");
+		print("\n"+reset);
 	}
 }
