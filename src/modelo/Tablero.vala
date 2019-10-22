@@ -288,4 +288,10 @@ public class Tablero {
 		}	
 		print("\n"+reset);
 	}
+
+	//  static int main(string[] args) {
+	//  	Tablero m = new Tablero(25,14,75);
+	//  	m.to_string();
+	//  	return 0;
+	//  }
 }
