@@ -76,19 +76,21 @@ public class Tablero {
 		}
 
 		/* Convierte en una cadena de texto la información de la celda. */
-		public void to_string(){
+		public string to_string(){
+			string s = "";
 			if (!presionado && !bandera){
-				stdout.printf (fondoVerdeIntenso+letraNegra+"[  ]"+reset);				
+				s = fondoVerdeIntenso+letraNegra+"[  ]"+reset;				
 			} else 
 			if (presionado && mina){
-				stdout.printf (fondoVerdeIntenso+letraNegra+"[💣]"+reset);
+				s = fondoVerdeIntenso+letraNegra+"[💣]"+reset;
 			} else 
 			if (bandera){
-				stdout.printf (fondoVerdeIntenso+letraNegra+"[🚩]"+reset);
+				s = fondoVerdeIntenso+letraNegra+"[🚩]"+reset;
 			} else
 			if (presionado){
-				stdout.printf (fondoVerde+letraNegra+"[  ]"+reset);
+				s = fondoVerde+letraNegra+"[  ]"+reset;
 			} 
+			return s;
 		}
 	}
 
@@ -275,23 +277,23 @@ public class Tablero {
 	public void to_string (){
 		print("\n");
 		for (int i = 0; i < obtenerColumnas(); i++) {
+			if (i == 0) stdout.printf ("\t\t\t %i  ",i);
+			else 
 			if (i>9) stdout.printf (" %i ",i);
 			else stdout.printf (" %i  ",i);
 		}	
 		print("\n");
 		for (int i = 0; i < obtenerFilas(); i++) {
 			for (int j = 0; j < obtenerColumnas(); j++) {
-				tablero[i,j].to_string();
+				if (j == 0){
+					stdout.printf ("\t\t\t"+tablero[i,j].to_string());
+				} else {
+					stdout.printf (tablero[i,j].to_string());
+				}
 			}
 			stdout.printf (" %i ",i);
 			print("\n");
 		}	
 		print("\n"+reset);
 	}
-
-	//  static int main(string[] args) {
-	//  	Tablero m = new Tablero(25,14,75);
-	//  	m.to_string();
-	//  	return 0;
-	//  }
 }
