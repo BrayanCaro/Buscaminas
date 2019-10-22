@@ -10,10 +10,10 @@ exe = executable('app', sources: sources, dependencies : deps)
 
 # inciamos el test
 sources = files(
-  'pruebas/tablero_prueba.vala',
+  'pruebas/presionar_prueba.vala',
   'src/modelo/Tablero.vala'
 )
-test_unit = 'tablero_prueba'
+test_unit = 'presionar_prueba'
 deps = [dependency('glib-2.0'),dependency('gtk+-3.0'), dependency('gee-0.8')]
 exe = executable(test_unit, sources: sources, dependencies : deps)
 # anexamos el test
