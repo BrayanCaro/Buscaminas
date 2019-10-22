@@ -9,17 +9,65 @@ protected enum Estado {
 }
 
 protected errordomain ErrorTipo1{
-	ARCHIVO_NO_ENCONTRADO
-}
-
-protected errordomain ErrorTipo2{
+	ARCHIVO_NO_ENCONTRADO,
 	NEGATIVOS
 }
 
 public class Tablero {
-	private Gee.HashMap<string, bool>[,] matriz;
+
+	/* Clase interna para crear una celda. */
+	private class Celda{
+		private int _minasAlrededor;
+		private bool _bandera;
+		private bool _mina;
+		private bool _presionado;
+
+		/* Construye una celda.
+		* @param minasAlrededor: número de minas en total de las 8, o menos,  minas que lo rodean
+		* @param mina: está minada o no.
+		* @param presionado: está presionada o no.
+		* @param bandera: tiene una bandera o no.
+		*/
+		public Celda(int minasAlrededor, bool mina, bool presionado, bool bandera){
+			this._minasAlrededor = minasAlrededor;
+			this._bandera = bandera;
+			this._mina = mina;
+			this._presionado = presionado;
+		}
+
+		/* Getter y setter de la bandera de la celda. */
+		public bool bandera{
+			get { return _bandera;}
+			set {_bandera = value; }
+		}
+
+		/* Getter y setter por si la celda está presionada. */
+		public bool presionado {
+			get {return _presionado;}
+			set {_presionado = value;}
+		}
+
+		/* Getter y setter para la mina. */
+		public bool mina{
+			get{return _mina;}
+			set{_mina = value;}
+		}
+
+		/* Getter de las minas al rededor de la celda. */
+		public int minasAlrededor{
+			get{return _minasAlrededor;}
+		}
+
+		/* Aumenta en 1 las minas al rededor de la celda- */
+		public void aumentaMinas(){
+			this._minasAlrededor +=1;
+		}
+	}
+
+	private Celda[,] tablero;
+	private Estado estado;
 	private int filas;
-	private int columnas;
+	private int columnas;	
 
 	/* tablero de n x m con k minas */
 	public Tablero(int n, int m, int k) 
@@ -28,25 +76,21 @@ public class Tablero {
 	requires (k>=1){
 		this.filas = n;
 		this.columnas = m;
-		this.matriz = new Gee.HashMap<string,bool>[obtenerFilas(),obtenerColumnas()];
+		this.tablero = new Celda[obtenerFilas(),obtenerColumnas()];
 		for (int i = 0; i < obtenerFilas(); i++) {
 			for (int j = 0; j < obtenerColumnas(); j++) {
-				this.matriz[i,j] = new Gee.HashMap<string,bool>();
-				this.matriz[i,j].set("bandera",false);
-				this.matriz[i,j].set("mina",false);
-				this.matriz[i,j].set("presionado",false);
+				this.tablero[i,j] = new Celda(0,false, false, false);
 			}
 		}
 		//  Coloca las bombas en el tablero.
 		for (int i = 0; i < k; i++) {
 			int coordenadaX = Random.int_range(0,obtenerFilas());					
 			int coordenadaY = Random.int_range(0,obtenerColumnas());
-			if (this.matriz[coordenadaX,coordenadaY]["mina"] == true){
+			if ((this.tablero[coordenadaX, coordenadaY]).mina){
 				i-=1;
 			} else {
-				this.matriz[coordenadaX,coordenadaY].set("mina", true);
+				(this.tablero[coordenadaX, coordenadaY]).mina = true;
 			}
-
 		}		
 	}
 
@@ -54,24 +98,25 @@ public class Tablero {
 	* Cambia las bombas de lugar, omite el lugar x,y.
 	* @param x: coordenada en el eje x.
 	* @param y: coordenada en el eje y.
+	* @param k: número de minas.
 	*/
-	private void cambiaMinas(int x, int y){
+	public void cambiaMinas(int x, int y, int k){
 		for (int i = 0; i < obtenerFilas(); i++) {
 			for (int j = 0; j < obtenerColumnas(); j++) {
-				this.matriz[i,j].set("mina",false);
+				(this.tablero[i, j]).mina = false;
 			}
 		}
+
 		for (int i = 0; i < k; i++) {
 			int coordenadaX = Random.int_range(0,obtenerFilas());					
 			int coordenadaY = Random.int_range(0,obtenerColumnas());
 			if (coordenadaX == x && coordenadaY == y){
 				i-=1;
-			} else if (this.matriz[coordenadaX,coordenadaY]["mina"] == true || estaPresionada(coordenadaX, coordenadaY)){
+			} else if ( (this.tablero[coordenadaX, coordenadaY]).mina || estaPresionada(coordenadaX, coordenadaY)){
 				i-=1;
 			} else {
-				this.matriz[coordenadaX,coordenadaY].set("mina", true);
+				(this.tablero[coordenadaX, coordenadaY]).mina = true;
 			}
-
 		}
 
 	}
@@ -100,41 +145,50 @@ public class Tablero {
 	requires (x>=0 && x <=obtenerFilas())
 	requires (y>=0 && y<=obtenerColumnas())
 	{
-		return this.matriz[x,y]["presionado"];
+		return (this.tablero[x, y]).presionado;
 	}
 
-
+	/*
+	* Comprueba que una casilla sea válida, es decir, que esté dentro del rango de filas y columnas y sea mayor o igual que 0.
+	* @param x: coordenada en el eje x.
+	* @param y: coordenada en el eje y.
+	*/
+	private bool casillaValida(int x, int y){
+		bool valida = true;
+		try{
+			if (x<0 || y<0) throw new ErrorTipo1.NEGATIVOS("No se aceptan coordenadas negativas.");
+		} catch (ErrorTipo1 e){
+			if (e is ErrorTipo1.NEGATIVOS) {
+				stdout.printf ("\t\tError: %s\n", e.message);
+				valida = false;
+			}
+		}
+		try{
+			if (x>=obtenerFilas() || y>= obtenerColumnas()) throw new ErrorTipo1.ARCHIVO_NO_ENCONTRADO("Coordeadas inexistentes.");
+		} catch (ErrorTipo1 e){
+			if (e is ErrorTipo1.ARCHIVO_NO_ENCONTRADO) {
+				stdout.printf ("\t\tError: %s\n", e.message);
+				valida = false;
+			}
+		}
+		return valida;
+	}
 	/* 
 	* Presionar casilla (x,y). Escribe un mensaje en pantalla advirtiendo que la casilla ya ha sido presionada en caso de.
 	* @param x: coordenada en el eje x.
 	* @param y: coordenada en el eje y.	
 	* @return true si se pudo presionar, false de lo contrario. 
 	*/
-	public bool presionar(int x, int y) throws ErrorTipo1{		
-		if (x>=0 && y>=0 && x<obtenerFilas() && y<obtenerColumnas()){
-			if(this.matriz[x,y]["presionado"] == false){
-				this.matriz[x,y].set("presionado", true);
+	public bool presionar(int x, int y) throws ErrorTipo1{
+		if (casillaValida(x, y)){
+			if (!(this.tablero[x,y].presionado)){
+				this.tablero[x,y].presionado = true;
 				return true;
 			} else {
 				stdout.printf ("\t\tEsa casilla ya está presionada.\n");
 				return false;
 			}
-		} else {			
-			try{
-				if (x<0 || y<0) throw new ErrorTipo2.NEGATIVOS("No se aceptan coordenadas negativas.");
-			} catch (ErrorTipo2 e){
-				if (e is ErrorTipo2.NEGATIVOS) {
-					stdout.printf ("\t\tError: %s\n", e.message);
-				}
-			}
-			try{
-				if (x>=obtenerFilas() || y>= obtenerColumnas()) throw new ErrorTipo1.ARCHIVO_NO_ENCONTRADO("Coordeadas inexistentes.");
-			} catch (ErrorTipo1 e){
-				if (e is ErrorTipo1.ARCHIVO_NO_ENCONTRADO) {
-					stdout.printf ("\t\tError: %s\n", e.message);
-				}
-			}
-		}
+		} 
 		return false;
 	}
 
@@ -145,29 +199,14 @@ public class Tablero {
 	* @return true si se pudo colocar la bandera, false en caso contrario.
 	*/
 	public bool colocarBandera(int x, int y) {
-		if (x>=0 && y>=0 && x<obtenerFilas() && y<obtenerColumnas()){
-			if(this.matriz[x,y]["bandera"] == false && !estaPresionada(x,y)){
-				this.matriz[x,y].set("bandera", true);
+		if (casillaValida(x,y)){
+			if(!(this.tablero[x,y].bandera || estaPresionada(x,y))){
+				this.tablero[x,y].bandera = true;
 				return true;
 			} else {
 				stdout.printf ("\t\tNo se puede colocar una bandera.\n");
 				return false;
 			}			
-		} else {			
-			try{
-				if (x<0 || y<0) throw new ErrorTipo2.NEGATIVOS("No se aceptan coordenadas negativas.");
-			} catch (ErrorTipo2 e){
-				if (e is ErrorTipo2.NEGATIVOS) {
-					stdout.printf ("\t\tError: %s\n", e.message);
-				}
-			}
-			try{
-				if (x>=obtenerFilas() || y>= obtenerColumnas()) throw new ErrorTipo1.ARCHIVO_NO_ENCONTRADO("Coordeadas inexistentes.");
-			} catch (ErrorTipo1 e){
-				if (e is ErrorTipo1.ARCHIVO_NO_ENCONTRADO) {
-					stdout.printf ("\t\tError: %s\n", e.message);
-				}
-			}
 		}
 		return false;
 	}
@@ -176,19 +215,32 @@ public class Tablero {
 	* @return estado del juego.
 	*/
 	public Estado getEstado() {
-		// TODO computar el estado actual
-		return Estado.GANADO;
+		return this.estado;
+	}
+
+	public void setEstado(Estado estado){
+		this.estado = estado;
+	}
+
+	/*
+	* Devuelve el equivalente a una cadena de texto del tablero.
+	*/
+	public void to_string (){
 	}
 
 	public static void main(string[] args) {
 		Tablero tabla = new Tablero(11,6,10);
-		try{
+		tabla.cambiaMinas(3,5, 10);
+		Celda m = new Celda(2,false, false, false);
+		
+		stdout.printf ("%s\n", (m.bandera).to_string());
+		//  try{
 			/* Sin el try catch el programa tiene warnings. Probar las coordenadas deseadas. */
-			tabla.presionar(5,0);		
-			tabla.presionar(5,0);		
-			tabla.colocarBandera(2,3);
-			tabla.presionar(89,-5);
-		} catch (ErrorTipo1 e){
-		}
+			//  tabla.presionar(5,0);		
+			//  tabla.presionar(5,0);		
+			//  tabla.colocarBandera(2,3);
+			//  tabla.presionar(89,-5);
+		//  } catch (ErrorTipo1 e){
+		//  }
 	}
 }
