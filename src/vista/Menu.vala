@@ -98,5 +98,6 @@ public class Menu{
 
   public static void main (){
     var manuPrueba = new Menu();
+    stdout.printf ("Hola bola");
   }  
 }
