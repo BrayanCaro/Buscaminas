@@ -25,3 +25,5 @@ El el directorio donde se encuentra el archivo ´meson.build´ ejecutamos:
      $ meson build
      $ cd build
      $ meson test
+>> Tambien podemos ver con más detalles los errores con:
+     $ meson test --print-errorlogs
