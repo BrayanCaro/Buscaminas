@@ -147,7 +147,7 @@ public class Menu{
 			string mensaje = mensaje1;
 			if (this.tablero.getEstado() == Estado.GANADO) {
 				mensaje = mensaje3;
-				carita = ":D";
+				carita = "B)";
 			} else if (this.tablero.getEstado() == Estado.PERDIDO) {
 				mensaje = mensaje4;
 				carita = "x(";
