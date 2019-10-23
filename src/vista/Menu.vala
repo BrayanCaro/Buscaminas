@@ -26,24 +26,27 @@ public class Menu{
   private bool bienvenida(){
 	while (true) {
       //  print("\033[40m");
-    stdout.printf("\t\t\tBuscaminas\nEscoge una opción: \n1. Jugar partida nueva.\n\ta)Fácil: 11x6 con 10 bombas.\n\tb)Medio: 18x10 con 35 bombas.\n\tc)Difícil: 25x14 con 75 bombas.\n   En caso de jugar una nueva partida escribe 1x, con x el nivel de dificultad del juego.\n2. Continuar con la partida.\n3. Salir.\n");
-    string opcion = stdin.read_line()._strip();
+    stdout.printf("\t\t\tBuscaminas\nEscoge una opción: \n1. Jugar partida nueva.\n\ta)Fácil: 11x6 con 10 bombas.\n\tb)Medio: 18x10 con 35 bombas.\n\tc)Difícil: 25x14 con 75 bombas.\n   En caso de jugar una nueva partida escribe 1x, con x el nivel de dificultad del juego.\n2. Continuar con la partida.\n3. Salir.\n"); string opcion = stdin.read_line()._strip();
     opcion = verificacionDeDatos(opcion);
 
       switch (opcion) {
         case "a":
         {
           this.tablero = new Tablero(11,6,10);
+		  return true;
           break;
         }
         case "b":
         {
-          //  Inicializar tablero de 18x10 con 35
+          this.tablero = new Tablero(18,10,35);
+		  return true;
           break;
         }
         case "c":
         {
-          //  Inicializar tablero de 25x14 con 75
+          // this.tablero = new Tablero(25,14,75);
+          this.tablero = new Tablero(25,14,15);
+		  return true;
           break;
         }
         case "2":
@@ -59,8 +62,8 @@ public class Menu{
         stdout.printf("\t\t\033[47m \033[1;30m Esa opción no existe. \033[0m \n\n");
         break;
       }
-    return true;
     }
+    return true;
   }
 
   /*
@@ -103,6 +106,7 @@ public class Menu{
   private void jugar() {
 	bool salir = false;
 	bool tirando = false;
+	bool finalizada = false;
 
 	string mensaje1 = "\t\t\tPartida en curso\n Escoge una opcion:\n1. " +
 		"Tirar\n2. Guardar\n3. Salir\n";
@@ -139,25 +143,27 @@ public class Menu{
 				continue;
 			}
 
-			int k = (int)i;
-			stdout.printf("%d", k);
-			// this.tablero.presionar((int)i, (int)j);
+			this.tablero.presionar((int)i, (int)j);
 			tirando = false;
 		} else {
 			string mensaje = mensaje1;
 			if (this.tablero.getEstado() == Estado.GANADO) {
 				mensaje = mensaje3;
 				carita = "B)";
+				finalizada = true;
 			} else if (this.tablero.getEstado() == Estado.PERDIDO) {
 				mensaje = mensaje4;
 				carita = "x(";
+				finalizada = true;
 			}
 			else carita = ":)";
+
 
 			stdout.printf("\t\t\t\t%s", carita);
 			tablero.to_string();
 			stdout.printf(mensaje);
 			string opcion = stdin.read_line()._strip();
+			if (finalizada) return;
 
 			switch (opcion) {
 				case "1": tirando = true; break;

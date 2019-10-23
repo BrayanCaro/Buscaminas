@@ -68,6 +68,7 @@ public class Tablero {
 		/* Getter de las minas al rededor de la celda. */
 		public int minasAlrededor{
 			get{return _minasAlrededor;}
+			set{_minasAlrededor = value;}
 		}
 
 		/* Aumenta en 1 las minas al rededor de la celda- */
@@ -80,16 +81,27 @@ public class Tablero {
 			string s = "";
 			if (!presionado && !bandera){
 				s = fondoVerdeIntenso+letraNegra+"[  ]"+reset;
-			} else 
-			if (presionado && mina){
+				s = "[?]"+reset;
+			} else if (presionado && mina){
 				s = fondoVerdeIntenso+letraNegra+"[💣]"+reset;
-			} else 
-			if (bandera){
+				s = "[B]"+reset;
+			} else if (bandera){
 				s = fondoVerdeIntenso+letraNegra+"[🚩]"+reset;
-			} else
-			if (presionado){
+				s = "[F]"+reset;
+			} else {
+				if (this._minasAlrededor == 0) s = "[ ]";
+				else s = "[" + this._minasAlrededor.to_string() + "]"+reset;
+			}
+
+			/*
+			if (mina){
+				s = fondoVerdeIntenso+letraNegra+"[💣]"+reset;
+				s = "[B]"+reset;
+			} else {
 				s = fondoVerde+letraNegra+"[  ]"+reset;
+				s = "[" + this._minasAlrededor.to_string() + "]"+reset;
 			} 
+			*/
 			return s;
 		}
 	}
@@ -112,7 +124,7 @@ public class Tablero {
 		}
 		//  Coloca las bombas en el tablero.
 		for (int i = 0; i < k; i++) {
-			int coordenadaX = Random.int_range(0,obtenerFilas());					
+			int coordenadaX = Random.int_range(0,obtenerFilas());
 			int coordenadaY = Random.int_range(0,obtenerColumnas());
 			if ((this.tablero[coordenadaX, coordenadaY]).mina){
 				i-=1;
@@ -120,6 +132,12 @@ public class Tablero {
 				(this.tablero[coordenadaX, coordenadaY]).mina = true;
 			}
 		}		
+
+		for (int i = 0; i < obtenerFilas(); i++) {
+			for (int j = 0; j < obtenerColumnas(); j++) {
+				this.tablero[i,j].minasAlrededor = actualizaMinasAlrededor(i,j);
+			}
+		}
 	}
 
 	/* Obtiene todas las minas del tablero.
@@ -147,9 +165,7 @@ public class Tablero {
 	private void revelaMinas(){
 		for (int i = 0; i < obtenerFilas(); i++) {
 			for (int j = 0; j < obtenerColumnas(); j++) {
-				if (tablero[i,j].mina){
-					tablero[i,j].presionado = true;
-				}
+				tablero[i,j].presionado = true;
 			}
 		}
 	}
@@ -190,7 +206,7 @@ public class Tablero {
 			if (x<0 || y<0) throw new ErrorTipo1.NEGATIVOS("No se aceptan coordenadas negativas.");
 		} catch (ErrorTipo1 e){
 			if (e is ErrorTipo1.NEGATIVOS) {
-				stdout.printf ("\t\t"+letraNegra+"Error: %s\n", e.message);
+				// stdout.printf ("\t\t"+letraNegra+"Error: %s\n", e.message);
 				valida = false;
 			}
 		}
@@ -198,7 +214,7 @@ public class Tablero {
 			if (x>=obtenerFilas() || y>= obtenerColumnas()) throw new ErrorTipo1.ARCHIVO_NO_ENCONTRADO("Coordeadas inexistentes.");
 		} catch (ErrorTipo1 e){
 			if (e is ErrorTipo1.ARCHIVO_NO_ENCONTRADO) {
-				stdout.printf ("\t\t"+letraNegra+"Error: %s\n", e.message);
+				// stdout.printf ("\t\t"+letraNegra+"Error: %s\n", e.message);
 				valida = false;
 			}
 		}
@@ -235,6 +251,21 @@ public class Tablero {
 		return false;
 	}
 
+	private int actualizaMinasAlrededor(int x, int y) {
+		int total = 0;
+		int[,] coords = { {x, y+1}, {x-1, y}, {x+1, y}, {x, y-1},
+			{x+1, y+1}, {x+1, y-1}, {x-1, y-1}, {x-1, y+1} };
+		for (int k = 0; k < coords.length[0]; k++) {
+			int i = coords[k,0];
+			int j = coords[k,1];
+			if (casillaValida(i,j)) {
+				if (this.tablero[i,j].mina)
+					total += 1;
+			}
+		}
+		return total;
+	}
+
 	/* extiende al presionar una casilla a todas las vecinas que no esten ya
 	 * presionadas o con alguna mina o bandera */
 	private void extender(int x, int y) {
@@ -248,12 +279,12 @@ public class Tablero {
 			if (casillaValida(i,j)) {
 				Celda c = this.tablero[i,j];
 				if (!c.mina && !c.bandera && !c.presionado) {
-					this.tablero[x,y].presionado = true;
+					this.tablero[i,j].presionado = true;
+					stdout.printf("(%d,%d) llamando (%d,%d)\n", x, y, i, j);
 					this.extender(i,j);
 				}
 			}
 		}
-		this.tablero = new Celda[obtenerFilas(),obtenerColumnas()];
 	}
 
 	/* Poner o quitar bandera en casilla (x,y). Escribe un mensaje en pantalla advirtiendo que la casilla no puede abanderarse en caso de.
@@ -299,10 +330,10 @@ public class Tablero {
 	public void to_string (){
 		print("\n");
 		for (int i = 0; i < obtenerColumnas(); i++) {
-			if (i == 0) stdout.printf ("\t\t\t %i  ",i);
+			if (i == 0) stdout.printf ("\t\t\t %i ",i);
 			else 
-			if (i>9) stdout.printf (" %i ",i);
-			else stdout.printf (" %i  ",i);
+			if (i>9) stdout.printf ("%i ",i);
+			else stdout.printf (" %i ",i);
 		}
 
 		print("\n");
