@@ -2,6 +2,8 @@
 \usepackage{graphicx}
 \usepackage[spanish]{babel}
 \usepackage[utf8]{inputenc} % Acentos
+\usepackage[noend]{algpseudocode}
+\usepackage{algorithm}
 \usepackage{tikz}
 \usepackage{hyperref}
 \usepackage[
@@ -20,13 +22,15 @@ heightrounded,
 \begin{document}
     \maketitle
     \section*{Repositorio: \url{https://github.com/BrayanCaro/BuscaminasVala}}
-    
+
     \section{Introducción}
     Buscaminas (Hecho en Vala)\\
     Presentamos un proyecto completo con pruebas, documentación de un buen juego buscaminas que busca mejorar el que ya teníamos hecho al inicio de la carrera, haciendo un código un poco más compacto, conciso y eficiente si usamos una parte gráfica para no estar imprimiendo muchas veces en la terminal el tablero.
+
     \section{Definición del problema}
     Diseñar el videojuego Buscaminas donde también podamos guardar la partida.\\
     En comparación con el proyecto anterior la idea es la misma, aunque intentaremos que el programa pueda funcionar en una pequeña ventana.
+
     \section{Análisis del problema}
     El juego tiene que ser capaz de:
     \begin{enumerate}
@@ -34,14 +38,66 @@ heightrounded,
         \item Tener en una tabla los mejores puntajes
         \item Dar la oportunidad de que el usuario decida el tamaño del tablero
     \end{enumerate}
+
     \section{Mejor alternativa}
     Ahora nuestro proyecto usaremos una interfaz gráfica para que el usuario solo tenga que seleccionar los botones sin necesidad de meter coordenadas
+
     \section{Pseudocódigo}
-    
+
+	En esta sección describiremos los algoritmos utilizados para hacer posible
+	este proyecto. Hay que tomar en cuenta que todos estos algoritmos están
+	encapsulados dentro de una clase \texttt{Tablero}, por lo tanto hacemos la
+	suposición de que al inicio de cada algoritmo, el tablero se encuentra en un
+	estado válido, además, dentro de estos, denotaremos por $n$ y $m$ la
+	cantidad de filas y columnas en el tablero, respectivamente y por $casillas$
+	la matriz que representa las casillas del tablero.
+
+
+	\begin{algorithm}
+	\caption{Presionar casilla} \label{alg:presionar}
+	\begin{algorithmic}[1]
+
+	\Procedure{PresionarCasilla}{$x,y$}
+	\Require \Call{CasillaValida}{$x,y$}
+	\State $casillas[x,y]$.\Call{marcarPresionado}{ }
+	\State \Call{Extender}{$x, y$}
+	\EndProcedure
+
+	\Procedure{Extender}{$x,y$}
+	\If{$casillas[x,y].bombasVecinas > 0$}
+	\Comment{Caso base}
+	\State \Return
+	\EndIf
+	\State $coords \gets [ (x,y+1), (x-1,y), (x+1,y), (x,y-1) ]$
+	\Comment{Vecinos arriba/abajo y de los lados}
+	\ForAll{$(i, j) \in coords$}
+	\If{\Call{CasillaValida}{$i,j$}}
+	\State $c \gets casillas[i,j]$
+	\If{\textbf{not} $c.minado$ \textbf{and not} $c.abanderado$ \textbf{and not}
+	$c.presionado$}
+	\State $c$.\Call{marcarPresionado}{ }
+	\State \Call{Extender}{$i,j$}
+	\EndIf
+	\EndIf
+	\EndFor
+	\EndProcedure
+
+	\Procedure{CasillaValida}{$x,y$}
+	\If{$0 \leq x < n$ \textbf{and} $0 \leq y < m$}
+	\State \Return \textbf{true}
+	\EndIf
+	\State \Return \textbf{false}
+	\EndProcedure
+	\end{algorithmic}
+	\end{algorithm}
+
+
     \section{Pruebas y mejoras}    
     Planeamos que el programa pueda ser más amigable con el usuario usando una ventana y que se pueda interactuar con el tablero seleccionando botones
+
     \section{Pensamiento a futuro}
     El programa podría ponerse en las tiendas de alguna plataforma de software como en 'Software de Ubuntu' porque Vala esta diseñado para la creación de aplicaciones (usando las bibliotecas de GNOME).
+
     \section*{Bibliografía}
     %
     % usar este comando para generar anexar links con
