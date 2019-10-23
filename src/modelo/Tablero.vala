@@ -79,7 +79,7 @@ public class Tablero {
 		public string to_string(){
 			string s = "";
 			if (!presionado && !bandera){
-				s = fondoVerdeIntenso+letraNegra+"[  ]"+reset;				
+				s = fondoVerdeIntenso+letraNegra+"[  ]"+reset;
 			} else 
 			if (presionado && mina){
 				s = fondoVerdeIntenso+letraNegra+"[💣]"+reset;
@@ -221,7 +221,8 @@ public class Tablero {
 					this.tablero[x,y].presionado = true;
 					setEstado(Estado.JUGANDO);
 					contadorParaGanar+=1;
-				}		
+					this.extender(x,y);
+				}
 				if (contadorParaGanar == (obtenerFilas()*obtenerColumnas())-obtenerMinas()-1){
 					setEstado(Estado.GANADO);
 				}
@@ -232,6 +233,24 @@ public class Tablero {
 			}
 		} 
 		return false;
+	}
+
+	/* extiende al presionar una casilla a todas las vecinas que no esten ya
+	 * presionadas o con alguna mina o bandera */
+	private void extender(int x, int y) {
+		int[,] coords = { {x, y+1}, {x-1, y}, {x+1, y}, {x, y-1} };
+		for (int k = 0; k < coords.length[0]; k++) {
+			int i = coords[k,0];
+			int j = coords[k,1];
+			if (casillaValida(i,j)) {
+				Celda c = this.tablero[i,j];
+				if (!c.mina && !c.bandera && !c.presionado) {
+					this.tablero[x,y].presionado = true;
+					this.extender(i,j);
+				}
+			}
+		}
+		this.tablero = new Celda[obtenerFilas(),obtenerColumnas()];
 	}
 
 	/* Poner o quitar bandera en casilla (x,y). Escribe un mensaje en pantalla advirtiendo que la casilla no puede abanderarse en caso de.
@@ -281,7 +300,8 @@ public class Tablero {
 			else 
 			if (i>9) stdout.printf (" %i ",i);
 			else stdout.printf (" %i  ",i);
-		}	
+		}
+
 		print("\n");
 		for (int i = 0; i < obtenerFilas(); i++) {
 			for (int j = 0; j < obtenerColumnas(); j++) {
