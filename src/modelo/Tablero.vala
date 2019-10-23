@@ -238,6 +238,9 @@ public class Tablero {
 	/* extiende al presionar una casilla a todas las vecinas que no esten ya
 	 * presionadas o con alguna mina o bandera */
 	private void extender(int x, int y) {
+		if (this.tablero[x,y].minasAlrededor > 0)
+			return;
+
 		int[,] coords = { {x, y+1}, {x-1, y}, {x+1, y}, {x, y-1} };
 		for (int k = 0; k < coords.length[0]; k++) {
 			int i = coords[k,0];
