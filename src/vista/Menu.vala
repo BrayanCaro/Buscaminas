@@ -15,8 +15,9 @@ public class Menu{
   public Menu(){
     this.tablero = null;
     while (bienvenida())
-		jugar();
-	this.tablero.to_string();
+    jugar();
+    if (this.tablero != null)
+      this.tablero.to_string();
   }
 
   /*
@@ -32,18 +33,18 @@ public class Menu{
       switch (opcion) {
         case "a":
         {
-			this.tablero = new Tablero(11,6,10);
-			return true;
+          this.tablero = new Tablero(11,6,10);
+          break;
         }
         case "b":
         {
-            //  Inicializar tablero de 18x10 con 35
-            break;
+          //  Inicializar tablero de 18x10 con 35
+          break;
         }
         case "c":
         {
-            //  Inicializar tablero de 25x14 con 75
-            break;
+          //  Inicializar tablero de 25x14 con 75
+          break;
         }
         case "2":
         {
@@ -52,13 +53,13 @@ public class Menu{
         }
         case "3":
         {
-		  return true;
+          return false;
         }
         default:
-          stdout.printf("\t\t\033[47m \033[1;30m Esa opción no existe. \033[0m \n\n");
+        stdout.printf("\t\t\033[47m \033[1;30m Esa opción no existe. \033[0m \n\n");
         break;
       }
-      //  print("\033[0m");
+    return true;
     }
   }
 
@@ -170,9 +171,6 @@ public class Menu{
   }
 
   public static void main (){
-    Tablero tan = new Tablero(11,8,10);
-    tan.to_string();
     var manuPrueba = new Menu();
-
   }  
 }
