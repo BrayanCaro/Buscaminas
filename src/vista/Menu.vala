@@ -44,8 +44,7 @@ public class Menu{
         }
         case "c":
         {
-          // this.tablero = new Tablero(25,14,75);
-          this.tablero = new Tablero(25,14,15);
+          this.tablero = new Tablero(25,14,75);
 		  return true;
           break;
         }
