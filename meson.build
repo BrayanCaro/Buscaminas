@@ -16,7 +16,8 @@ pruebas = [
   'presionar_prueba',
   'presionar_una_vez_prueba',
   'estado_perdido_prueba',
-  'estado_jugando_prueba'
+  'estado_jugando_prueba',
+  'propiedades_del_tablero'
   ]
 
 plantilla = 'pruebas/@0@.vala'
