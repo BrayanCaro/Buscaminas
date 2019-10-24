@@ -13,7 +13,7 @@ protected errordomain ErrorTipo1{
 }
 
 /* Tablero del buscaminas. */
-public class Tablero {
+public class Tablero : Object {
 	private Celda[,] tablero;
 	private Estado estado;
 	private int filas;
@@ -28,7 +28,7 @@ public class Tablero {
 	const string fondoVerdeIntenso = "\033[0;102m";
 
 	/* Clase interna para crear una celda. */
-	private class Celda{
+	private class Celda : Object {
 		private int _minasAlrededor;
 		private bool _bandera;
 		private bool _mina;
@@ -71,41 +71,25 @@ public class Tablero {
 			set{_minasAlrededor = value;}
 		}
 
-		/* Aumenta en 1 las minas al rededor de la celda- */
-		public void aumentaMinas(){
-			this._minasAlrededor +=1;
-		}
-
 		/* Convierte en una cadena de texto la información de la celda. */
 		public string to_string(){
 			string s = "";
 			if (!presionado && !bandera){
-				s = fondoVerdeIntenso+letraNegra+"[  ]"+reset;
-				s = "[?]"+reset;
+				s = fondoVerdeIntenso+letraNegra+"[ ?]"+reset;
+				// s = "[?]"+reset;
 			} else if (presionado && mina){
 				s = fondoVerdeIntenso+letraNegra+"[💣]"+reset;
-				s = "[B]"+reset;
+				// s = "[B]"+reset;
 			} else if (bandera){
 				s = fondoVerdeIntenso+letraNegra+"[🚩]"+reset;
-				s = "[F]"+reset;
+				// s = "[F]"+reset;
 			} else {
-				if (this._minasAlrededor == 0) s = "[ ]";
-				else s = "[" + this._minasAlrededor.to_string() + "]"+reset;
+				if (this._minasAlrededor == 0) s = fondoVerde+letraNegra+"[  ]"+reset;
+				else s = fondoVerde+letraNegra+"[ " + this._minasAlrededor.to_string() + "]"+reset;
 			}
-
-			/*
-			if (mina){
-				s = fondoVerdeIntenso+letraNegra+"[💣]"+reset;
-				s = "[B]"+reset;
-			} else {
-				s = fondoVerde+letraNegra+"[  ]"+reset;
-				s = "[" + this._minasAlrededor.to_string() + "]"+reset;
-			} 
-			*/
 			return s;
 		}
 	}
-
 
 	/* tablero de n x m con k minas */
 	public Tablero(int n, int m, int k) 
@@ -130,9 +114,11 @@ public class Tablero {
 				i-=1;
 			} else {
 				(this.tablero[coordenadaX, coordenadaY]).mina = true;
+				stdout.printf ("(%i, %i) ", coordenadaX, coordenadaY);
 			}
 		}		
 
+		print("\n");
 		for (int i = 0; i < obtenerFilas(); i++) {
 			for (int j = 0; j < obtenerColumnas(); j++) {
 				this.tablero[i,j].minasAlrededor = actualizaMinasAlrededor(i,j);
@@ -175,26 +161,25 @@ public class Tablero {
 	* @param y: coordenada en el eje y.
 	* @param k: número de minas.
 	*/
-	public void cambiaMinas(int x, int y){
+	private void cambiaMinas(int x, int y){
+		bool bandera = true;
+		do {
+				int coordenadaX = Random.int_range(0,obtenerFilas());
+				int coordenadaY = Random.int_range(0,obtenerColumnas());
+				if ((this.tablero[coordenadaX, coordenadaY]).mina || (coordenadaX == x && coordenadaY == y)){
+					bandera = true;
+				} else {
+					(this.tablero[coordenadaX, coordenadaY]).mina = true;
+					bandera = false;
+				}	
+		} while (bandera);
+
 		for (int i = 0; i < obtenerFilas(); i++) {
 			for (int j = 0; j < obtenerColumnas(); j++) {
-				(this.tablero[i, j]).mina = false;
+				this.tablero[i,j].minasAlrededor = actualizaMinasAlrededor(i,j);
 			}
 		}
-
-		for (int i = 0; i < obtenerMinas(); i++) {
-			int coordenadaX = Random.int_range(0,obtenerFilas());					
-			int coordenadaY = Random.int_range(0,obtenerColumnas());
-			if (coordenadaX == x && coordenadaY == y){
-				i-=1;
-			} else if ( (this.tablero[coordenadaX, coordenadaY]).mina || tablero[x,y].presionado){
-				i-=1;
-			} else {
-				(this.tablero[coordenadaX, coordenadaY]).mina = true;
-			}
-		}
-
-	}
+	}		
 
 	/* Comprueba que una casilla sea válida, es decir, que esté dentro del rango de filas y columnas y sea mayor o igual que 0.
 	* @param x: coordenada en el eje x.
@@ -230,9 +215,19 @@ public class Tablero {
 		if (casillaValida(x, y)){
 			if (!(this.tablero[x,y].presionado)){	
 				if (tablero[x,y].mina){
-				this.tablero[x,y].presionado = true;
-				revelaMinas();
-				setEstado(Estado.PERDIDO);
+					if (contadorParaGanar == 0){
+						cambiaMinas(x,y);
+						this.tablero[x,y].mina = false;
+						this.tablero[x,y].presionado = true;
+						this.extender(x,y);
+						setEstado(Estado.JUGANDO);
+						contadorParaGanar+=1;
+					} else{
+						this.tablero[x,y].presionado = true;
+						revelaMinas();
+						setEstado(Estado.PERDIDO);
+						stdout.printf("aaa\n");
+					}
 				} else{ // No hay una mina en la casilla.
 					this.tablero[x,y].presionado = true;
 					setEstado(Estado.JUGANDO);
@@ -280,7 +275,6 @@ public class Tablero {
 				Celda c = this.tablero[i,j];
 				if (!c.mina && !c.bandera && !c.presionado) {
 					this.tablero[i,j].presionado = true;
-					stdout.printf("(%d,%d) llamando (%d,%d)\n", x, y, i, j);
 					this.extender(i,j);
 				}
 			}
@@ -330,10 +324,10 @@ public class Tablero {
 	public void to_string (){
 		print("\n");
 		for (int i = 0; i < obtenerColumnas(); i++) {
-			if (i == 0) stdout.printf ("\t\t\t %i ",i);
+			if (i == 0) stdout.printf ("\t\t\t %i  ",i);
 			else 
-			if (i>9) stdout.printf ("%i ",i);
-			else stdout.printf (" %i ",i);
+			if (i>9) stdout.printf (" %i ",i);
+			else stdout.printf (" %i  ",i);
 		}
 
 		print("\n");
@@ -349,5 +343,109 @@ public class Tablero {
 			print("\n");
 		}	
 		print("\n"+reset);
+	}
+
+	public bool guardar() {
+		Json.Builder builder = new Json.Builder ();
+		builder.begin_object();
+
+		string estado;
+		if (this.estado == Estado.JUGANDO) estado = "jugando";
+		else if (this.estado == Estado.PERDIDO) estado = "perdido";
+		else estado = "ganado";
+		builder.set_member_name("estado");
+		builder.add_string_value(estado);
+
+		builder.set_member_name("filas");
+		builder.add_int_value(this.filas);
+		builder.set_member_name("columnas");
+		builder.add_int_value(this.columnas);
+		builder.set_member_name("minas");
+		builder.add_int_value(this.minas);
+		builder.set_member_name("contador");
+		builder.add_int_value(this.contadorParaGanar);
+
+		builder.set_member_name("tablero");
+		builder.begin_array();
+		for (int i = 0; i < this.filas; i++) {
+			builder.begin_array();
+			for (int j = 0; j < this.columnas; j++) {
+				Celda c = tablero[i,j];
+				builder.begin_array();
+				builder.add_int_value(c.minasAlrededor);
+				builder.add_boolean_value(c.bandera);
+				builder.add_boolean_value(c.mina);
+				builder.add_boolean_value(c.presionado);
+				builder.end_array();
+			}
+			builder.end_array();
+		}
+		builder.end_array();
+
+		builder.end_object();
+		Json.Generator generator = new Json.Generator();
+		Json.Node root = builder.get_root();
+		generator.set_root(root);
+		string str = generator.to_data(null);
+
+		try {
+			var file = File.new_for_path("./.tablero.json");
+			if (file.query_exists()) file.delete();
+			var dos = new DataOutputStream(file.create(FileCreateFlags.REPLACE_DESTINATION));
+			uint8[] data = str.data;
+			long written = 0;
+			while (written < data.length) { 
+				written += dos.write(data[written:data.length]);
+			}
+		} catch (Error e) {
+			stdout.printf("Error al escribir");
+			return false;
+		}
+		return true;
+	}
+
+	public bool cargar() {
+		var file = File.new_for_path("./.tablero.json");
+		if (!file.query_exists ()) return false;
+		string data = "";
+
+		try {
+			var dis = new DataInputStream(file.read());
+			string line;
+			while ((line = dis.read_line (null)) != null)
+				data += line;
+		} catch (Error e) {
+			return false;
+		}
+
+		var parser = new Json.Parser();
+		parser.load_from_data(data);
+		var root = parser.get_root().get_object();
+
+		string estado = root.get_string_member("estado");
+		if (estado == "jugando") this.estado = Estado.JUGANDO;
+		else if (estado == "perdido") this.estado = Estado.PERDIDO;
+		else this.estado = Estado.GANADO;
+		this.filas = (int)root.get_int_member("filas");
+		this.columnas = (int)root.get_int_member("columnas");
+		this.minas = (int)root.get_int_member("minas");
+		this.contadorParaGanar = (int)root.get_int_member("contador");
+
+		this.tablero = new Celda[this.filas,this.columnas];
+		var minas = root.get_array_member("tablero");
+		for (int i = 0; i < filas; i++) {
+			var fila = minas.get_array_element(i);
+			for (int j = 0; j < columnas; j++) {
+				var celda = fila.get_array_element(j);
+				int alrededor = (int)celda.get_int_element(0);
+				bool bandera = celda.get_boolean_element(1);
+				bool minado = celda.get_boolean_element(2);
+				bool presionado = celda.get_boolean_element(3);
+				this.tablero[i,j] = new Celda(alrededor, minado, presionado,
+					bandera);
+			}
+		}
+
+		return true;
 	}
 }
