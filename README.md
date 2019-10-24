@@ -11,3 +11,9 @@ El clásico juego Buscaminas hecho en Vala con amor :sparkling_heart:
 >
 >     $ sudo apt-get update
 >     $ sudo apt install valac
+
+
+> ## Dependencia
+>Lo que necesitas para que compile sin errores:
+>
+>     $ sudo apt-get install libjson-glib-dev
