@@ -24,23 +24,72 @@ heightrounded,
     \section*{Repositorio: \url{https://github.com/BrayanCaro/BuscaminasVala}}
 
     \section{Introducción}
-    Buscaminas (Hecho en Vala)\\
-    Presentamos un proyecto completo con pruebas, documentación de un buen juego buscaminas que busca mejorar el que ya teníamos hecho al inicio de la carrera, haciendo un código un poco más compacto, conciso y eficiente si usamos una parte gráfica para no estar imprimiendo muchas veces en la terminal el tablero.
 
-    \section{Definición del problema}
-    Diseñar el videojuego Buscaminas donde también podamos guardar la partida.\\
-    En comparación con el proyecto anterior la idea es la misma, aunque intentaremos que el programa pueda funcionar en una pequeña ventana.
+	Todos estamos familiarizados con el juego de buscaminas. El objetivo de este
+	es simple: descubrir totalmente un campo minado sin llegar a activar una de
+	estas y las reglas del juego sencillas. Además, puede ser un reto
+	interesante al momento de programar, pues estar sujeto a varios diseños y
+	depende de cada uno el que le parezca más adecuado.
 
-    \section{Análisis del problema}
-    El juego tiene que ser capaz de:
+	Este documento presenta y analiza la implementación de un Buscaminas en el
+	lenguaje de programación Vala. Presentamos un proyecto completo con pruebas
+	y documentación de un buen juego
+	buscaminas que busca mejorar el que ya teníamos hecho al inicio de la
+	carrera, haciendo un código más compacto, siguiendo principos antes
+	extraños, que fueron vistos durante el curso y ofreciendo una interfaz al
+	usuario más amigable que en el proyecto inicial.
+
+	\section{Definición del problema}
+
+	El reto de este proyecto consiste en implementar correctamente un juego de
+	buscaminas en Vala, pero también se pueda guardar la partida en curso y
+	poder cargar esta partida posteriormente. Esto se exitende desde aprender a
+	utilizar el lenguaje Vala, manipular la serialización de objetos en este y
+	poder realizar el diseño de el proyecto elegantemente.
+
+	\section{Análisis del problema}
+
+	Las reglas del buscaminas son sencillas. Inicia en un tablero de tamaño $n
+	\times m$, con todas las casillas iguales. En cada turno el jugador
+	decidirá presionar una de estas casillas o colocar una bandera. La bandera
+	sirve únicamente para ayudarle al usuario a recordar las casillas en donde
+	se cree hay una mina.
+
+	Si el jugador decide presionar una casilla y esta contiene una mina, se
+	perderá la partida. Si no contenía una mina entonces se extenderá la zona
+	descubierta hasta que todas las casillas de la zona tengan al menos a una
+	casilla con bomba adyacente a ella. En cada una de estas casillas se
+	mostrará un número, que indica cuántas casillas adyacentes contienen una
+	mina. Este número le servirá al usuario para poder deducir en cuales
+	casillas hay minas y en cuales no las hay.
+
+	Además, nuestro programa podrá ser capaz de:
+
     \begin{enumerate}
-        \item Guardar la partida
-        \item Tener en una tabla los mejores puntajes
-        \item Dar la oportunidad de que el usuario decida el tamaño del tablero
+        \item Guardar y cargar partidas.
+        \item Tener en una tabla los mejores puntajes.
+        \item Dar la oportunidad de que el usuario decida el tamaño del tablero.
     \end{enumerate}
 
     \section{Mejor alternativa}
-    Ahora nuestro proyecto usaremos una interfaz gráfica para que el usuario solo tenga que seleccionar los botones sin necesidad de meter coordenadas
+
+	Parte del reto de este proyecto fue el considerar en qué lenguaje realizar
+	el juego. Después de varias opciones analizadas se terminó optando por, como
+	ya fue mencionado anteriormente, Vala. A continuación daremos una pequeña
+	descripción de este lenguaje y daremos varias justificaciones de que este
+	lenguaje es buena propuesta para nuestro problema.
+
+	Vala es un lenguaje de alto nivel orientado a objetos con un compilador
+	que genera código en C. Vala es sintácticamente similar a C\# e incluye
+	notables características como funciones anónimas, propiedades, genéricos,
+	manejo de memoria asistida, manejo de excepciones, inferencia de tipos y el
+	bucle foreach.
+
+	Creemos que esta es una buena alternativa para realizar nuestro buscaminas
+	pues es relativamente sencillo sintáctimanete y además ofrece varias
+	características útiles, como las mencionadas anteriormente, que facilitan el
+	escribir código. Además al ser compilado a C podemos esperar un programa
+	final relativamente ligero y fácilmente distribuible.
 
     \section{Pseudocódigo}
 
@@ -93,9 +142,26 @@ heightrounded,
 
 
     \section{Pruebas y mejoras}    
-    Planeamos que el programa pueda ser más amigable con el usuario usando una ventana y que se pueda interactuar con el tablero seleccionando botones
+
+	La mejora principal que vio nuestro programa es en el diseño. Como el
+	buscaminas original fue realizado al inicio de la carrera, nuestros
+	conocimientos en diseño eran muy pobres y como a penas estábamos practicando
+	los conceptos básicos de programación orientada a objetos, termino estando
+	muy mal diseñado y sin estar tan claro.
+
+	Por otro lado, el nuevo buscaminas ve una mejora significativa en este
+	rubro, reducimos la cantidad de clases notablemente simplificando el código,
+	el diseño y la implementación, tanto en la interfaz con el usuario como en
+	el modelo de nuestro tablero. Además esta vez incluimos pruebas unitarias,
+	ayudándonos a depurar más facilemente nuestro código y poder tener más
+	confianza en el correcto funcionamento.
+
+	También, al utilizar serialización utilizando el formato json, es más fácil
+	poder guardar estos tableros y leerlos por otros programas, si eso llegara
+	a ser necesario.
 
     \section{Pensamiento a futuro}
+
     El programa podría ponerse en las tiendas de alguna plataforma de software como en 'Software de Ubuntu' porque Vala esta diseñado para la creación de aplicaciones (usando las bibliotecas de GNOME).
 
     \section*{Bibliografía}
