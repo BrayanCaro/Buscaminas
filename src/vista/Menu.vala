@@ -5,49 +5,45 @@ public class Menu{
   //    Media     18*10 con entre 35 bombas 
   //    Dificil   25*14 con 75 bombas 
 
-    /*
-    * Crea un menú.
-    */
+    /* Crea un menú. */
   public Menu(){
     stdout.printf ("-");
     while (bienvenida())
     jugar();
   }
 
-  /*
-  * Muestra un menú de bienvenida.
-  */
+  /* Muestra un menú de bienvenida. */
   private bool bienvenida(){
-	while (true) {
-    stdout.printf("\t\t\t\t\tBuscaminas\n\t\tEscoge una opción: \n\t\t1. Jugar partida nueva.\n\t\t\ta)Fácil: 11x6 con 10 bombas.\n\t\t\tb)Medio: 18x10 con 35 bombas.\n\t\t\tc)Difícil: 25x14 con 75 bombas.\n   \t\tEn caso de jugar una nueva partida escribe 1x, con x el nivel de dificultad del juego.\n\t\t2. Continuar con la partida.\n\t\t3. Salir.\n"); string opcion = stdin.read_line()._strip();
-    opcion = verificacionDeDatos(opcion);
+    while (true) {
+      stdout.printf("\t\t\t\t\tBuscaminas\n\t\tEscoge una opción: \n\t\t1. Jugar partida nueva.\n\t\t\ta)Fácil: 11x6 con 10 bombas.\n\t\t\tb)Medio: 18x10 con 35 bombas.\n\t\t\tc)Difícil: 25x14 con 75 bombas.\n   \t\tEn caso de jugar una nueva partida escribe 1x, con x el nivel de dificultad del juego.\n\t\t2. Continuar con la partida.\n\t\t3. Salir.\n"); string opcion = stdin.read_line()._strip();
+      opcion = verificacionDeDatos(opcion);
       switch (opcion) {
         case "a":
         {
           this.tablero = new Tablero(11,6,10);
-		  return true;
+          return true;
         }
         case "b":
         {
           this.tablero = new Tablero(18,10,35);
-		  return true;
+          return true;
         }
         case "c":
         {
           this.tablero = new Tablero(25,14,75);
-		  return true;
+          return true;
         }
         case "2":
         {
-			this.tablero = new Tablero(10, 10, 10);
-			if (this.tablero.cargar()) {
-          		print("Partida cargada exitosamente.\n");
-				return true;
-			} else {
-          		print("Error al cargar partida.\n");
-				this.tablero = null;
-			}
-          break;
+        this.tablero = new Tablero(10, 10, 10);
+        if (this.tablero.cargar()) {
+          print("Partida cargada exitosamente.\n");
+          return true;
+        } else {
+          print("Error al cargar partida.\n");
+          this.tablero = null;
+        }
+        break;
         }
         case "3":
         {
@@ -93,6 +89,7 @@ public class Menu{
     return dificultadJuego;
   }
 
+  /* Juega un buscaminas. */
   private void jugar() {
     bool salir = false;
     bool tirando = false;
@@ -167,6 +164,6 @@ public class Menu{
   }
 
   public static void main (){
-    var manuPrueba = new Menu();
+    var menuPrueba = new Menu();
   }  
 }
