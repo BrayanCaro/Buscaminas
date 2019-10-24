@@ -4,5 +4,5 @@ if ! [ -d "build/" ]; then
   meson build
 fi
 cd build
-ninja
+ninja &> /dev/null
 ./buscaminas
