@@ -124,7 +124,11 @@ public class Menu{
                 stdout.printf("\t\t\033[47m \033[1;30mEntrada invalida\033[0m\n");
                 continue;
               }
-              this.tablero.presionar((int)j, (int)i);
+              try{
+                this.tablero.presionar((int)j, (int)i);
+              } catch(Error e){
+                stdout.printf (e.message);
+              }
               tirando = false; 
 
       } else {
@@ -148,9 +152,9 @@ public class Menu{
                 case "1": tirando = true; break;
                 case "2":
 						if (tablero.guardar())
-							stdout.printf("Partida guardada...");
+							stdout.printf("\t\t\tPartida guardada...");
 						else
-							stdout.printf("Partida guardada...");
+							stdout.printf("\t\t\tPartida guardada...");
 						break;
                 case "3": salir = true; break;
                 default: stdout.printf("\t\t\033[47m \033[1;30mEntrada invalida\033[0m\n"); break;
