@@ -87,16 +87,6 @@ public class Tablero {
 				if (this._minasAlrededor == 0) s = fondoVerde+letraNegra+"[  ]"+reset;
 				else s = fondoVerde+letraNegra+"[ " + this._minasAlrededor.to_string() + "]"+reset;
 			}
-
-			/*
-			if (mina){
-				s = fondoVerdeIntenso+letraNegra+"[💣]"+reset;
-				s = "[B]"+reset;
-			} else {
-				s = fondoVerde+letraNegra+"[  ]"+reset;
-				s = "[" + this._minasAlrededor.to_string() + "]"+reset;
-			} 
-			*/
 			return s;
 		}
 	}
@@ -125,9 +115,11 @@ public class Tablero {
 				i-=1;
 			} else {
 				(this.tablero[coordenadaX, coordenadaY]).mina = true;
+				stdout.printf ("(%i, %i) ", coordenadaX, coordenadaY);
 			}
 		}		
 
+		print("\n");
 		for (int i = 0; i < obtenerFilas(); i++) {
 			for (int j = 0; j < obtenerColumnas(); j++) {
 				this.tablero[i,j].minasAlrededor = actualizaMinasAlrededor(i,j);
@@ -170,26 +162,25 @@ public class Tablero {
 	* @param y: coordenada en el eje y.
 	* @param k: número de minas.
 	*/
-	public void cambiaMinas(int x, int y){
+	private void cambiaMinas(int x, int y){
+		bool bandera = true;
+		do {
+				int coordenadaX = Random.int_range(0,obtenerFilas());
+				int coordenadaY = Random.int_range(0,obtenerColumnas());
+				if ((this.tablero[coordenadaX, coordenadaY]).mina || (coordenadaX == x && coordenadaY == y)){
+					bandera = true;
+				} else {
+					(this.tablero[coordenadaX, coordenadaY]).mina = true;
+					bandera = false;
+				}	
+		} while (bandera);
+
 		for (int i = 0; i < obtenerFilas(); i++) {
 			for (int j = 0; j < obtenerColumnas(); j++) {
-				(this.tablero[i, j]).mina = false;
+				this.tablero[i,j].minasAlrededor = actualizaMinasAlrededor(i,j);
 			}
 		}
-
-		for (int i = 0; i < obtenerMinas(); i++) {
-			int coordenadaX = Random.int_range(0,obtenerFilas());					
-			int coordenadaY = Random.int_range(0,obtenerColumnas());
-			if (coordenadaX == x && coordenadaY == y){
-				i-=1;
-			} else if ( (this.tablero[coordenadaX, coordenadaY]).mina || tablero[x,y].presionado){
-				i-=1;
-			} else {
-				(this.tablero[coordenadaX, coordenadaY]).mina = true;
-			}
-		}
-
-	}
+	}		
 
 	/* Comprueba que una casilla sea válida, es decir, que esté dentro del rango de filas y columnas y sea mayor o igual que 0.
 	* @param x: coordenada en el eje x.
@@ -225,9 +216,18 @@ public class Tablero {
 		if (casillaValida(x, y)){
 			if (!(this.tablero[x,y].presionado)){	
 				if (tablero[x,y].mina){
-				this.tablero[x,y].presionado = true;
-				revelaMinas();
-				setEstado(Estado.PERDIDO);
+					if (contadorParaGanar == 0){
+						cambiaMinas(x,y);
+						this.tablero[x,y].mina = false;
+						this.tablero[x,y].presionado = true;
+						this.extender(x,y);
+						setEstado(Estado.JUGANDO);
+						contadorParaGanar+=1;
+					} else{
+						this.tablero[x,y].presionado = true;
+						revelaMinas();
+						setEstado(Estado.PERDIDO);
+					}
 				} else{ // No hay una mina en la casilla.
 					this.tablero[x,y].presionado = true;
 					setEstado(Estado.JUGANDO);
