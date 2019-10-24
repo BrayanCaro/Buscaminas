@@ -71,26 +71,21 @@ public class Tablero {
 			set{_minasAlrededor = value;}
 		}
 
-		/* Aumenta en 1 las minas al rededor de la celda- */
-		public void aumentaMinas(){
-			this._minasAlrededor +=1;
-		}
-
 		/* Convierte en una cadena de texto la información de la celda. */
 		public string to_string(){
 			string s = "";
 			if (!presionado && !bandera){
 				s = fondoVerdeIntenso+letraNegra+"[  ]"+reset;
-				s = "[?]"+reset;
+				//  s = "[?]"+reset;
 			} else if (presionado && mina){
 				s = fondoVerdeIntenso+letraNegra+"[💣]"+reset;
-				s = "[B]"+reset;
+				//  s = "[B]"+reset;
 			} else if (bandera){
 				s = fondoVerdeIntenso+letraNegra+"[🚩]"+reset;
-				s = "[F]"+reset;
+				//  s = "[F]"+reset;
 			} else {
-				if (this._minasAlrededor == 0) s = "[ ]";
-				else s = "[" + this._minasAlrededor.to_string() + "]"+reset;
+				if (this._minasAlrededor == 0) s = fondoVerde+letraNegra+"[  ]"+reset;
+				else s = fondoVerde+letraNegra+"[ " + this._minasAlrededor.to_string() + "]"+reset;
 			}
 
 			/*
@@ -280,7 +275,6 @@ public class Tablero {
 				Celda c = this.tablero[i,j];
 				if (!c.mina && !c.bandera && !c.presionado) {
 					this.tablero[i,j].presionado = true;
-					stdout.printf("(%d,%d) llamando (%d,%d)\n", x, y, i, j);
 					this.extender(i,j);
 				}
 			}
@@ -330,10 +324,10 @@ public class Tablero {
 	public void to_string (){
 		print("\n");
 		for (int i = 0; i < obtenerColumnas(); i++) {
-			if (i == 0) stdout.printf ("\t\t\t %i ",i);
+			if (i == 0) stdout.printf ("\t\t\t %i  ",i);
 			else 
-			if (i>9) stdout.printf ("%i ",i);
-			else stdout.printf (" %i ",i);
+			if (i>9) stdout.printf (" %i ",i);
+			else stdout.printf (" %i  ",i);
 		}
 
 		print("\n");
