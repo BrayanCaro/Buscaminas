@@ -160,6 +160,24 @@ heightrounded,
 	poder guardar estos tableros y leerlos por otros programas, si eso llegara
 	a ser necesario.
 
+	Otra gran mejora que se realizó fue la manera en la que se compila y ejecuta
+	el programa. En las propuestas anteriores utilizabamos \texttt{make}, que a
+	pesar de que cumplía con el objetivo, no había garantía de que lo hiciera en
+	todos los ordenadores, pues nos enfrentamos con problema de compilación en
+	algunos. Otra alternativa que se tenía era compilar todo el proyecto
+	manualmente y tener que ejecutarlo utilizando el ejecutador de java. Esto
+	resultaba algo engorroso y además se neciesitaba que el usuario tuviera
+	conocimientos sobre java y tuviera y supiera utilizar las herramientas
+	adecuadas.
+
+	En esta implementación utilizamos \texttt{mason}, que resulta ser una
+	alternativa más fiable que \texttt{make}, dando la misma facilidad para
+	compilar utilizando un solo comando, pero teniendo más fiabilidad de que lo
+	haga correctamente. Además esta herramienta arroja un archivio ejecutable,
+	en vez de un archivo empaquetado \texttt{jar}, lo que facilita la
+	distribución y ejecución de nuestro proyecto, sin siquiera necesitar
+	instalar ninguna herramienta más.
+
     \section{Pensamiento a futuro}
 
     El programa podría ponerse en las tiendas de alguna plataforma de software como en 'Software de Ubuntu' porque Vala esta diseñado para la creación de aplicaciones (usando las bibliotecas de GNOME).
