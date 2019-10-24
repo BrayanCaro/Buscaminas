@@ -6,7 +6,6 @@ void tablero_jugando () {
     assert(tab.getEstado() == Estado.JUGANDO);
     tab = new Tablero(25,14,75);
     assert(tab.getEstado() == Estado.JUGANDO);
-    assert(false);
   });
 }
 
