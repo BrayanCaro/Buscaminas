@@ -212,7 +212,7 @@ public class Tablero : Object {
 	* @param y: coordenada en el eje y.	
 	* @return true si se pudo presionar, false de lo contrario. 
 	*/
-	public bool presionar(int x, int y) throws ErrorTipo1{
+	public bool presionar(int x, int y){
 		if (casillaValida(x, y)){
 			if (!(this.tablero[x,y].presionado)){	
 				if (tablero[x,y].mina){

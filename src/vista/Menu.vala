@@ -121,11 +121,7 @@ public class Menu{
                 stdout.printf("\t\t\033[47m \033[1;30mEntrada invalida\033[0m\n");
                 continue;
               }
-              try{
-                this.tablero.presionar((int)j, (int)i);
-              } catch(Error e){
-                stdout.printf (e.message);
-              }
+              this.tablero.presionar((int)j, (int)i);
               tirando = false; 
 
       } else {
@@ -164,6 +160,6 @@ public class Menu{
   }
 
   public static void main (){
-    var menuPrueba = new Menu();
+    var menu = new Menu();
   }  
 }
