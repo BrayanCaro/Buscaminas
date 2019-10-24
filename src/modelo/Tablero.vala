@@ -99,6 +99,7 @@ public class Tablero : Object {
 		this.filas = n;
 		this.columnas = m;
 		this.minas = k;
+		this.contadorParaGanar = 0;
 		this.tablero = new Celda[obtenerFilas(),obtenerColumnas()];
 		setEstado(Estado.JUGANDO);
 		for (int i = 0; i < obtenerFilas(); i++) {
@@ -114,11 +115,9 @@ public class Tablero : Object {
 				i-=1;
 			} else {
 				(this.tablero[coordenadaX, coordenadaY]).mina = true;
-				stdout.printf ("(%i, %i) ", coordenadaX, coordenadaY);
 			}
 		}		
 
-		print("\n");
 		for (int i = 0; i < obtenerFilas(); i++) {
 			for (int j = 0; j < obtenerColumnas(); j++) {
 				this.tablero[i,j].minasAlrededor = actualizaMinasAlrededor(i,j);
@@ -219,9 +218,9 @@ public class Tablero : Object {
 						cambiaMinas(x,y);
 						this.tablero[x,y].mina = false;
 						this.tablero[x,y].presionado = true;
-						this.extender(x,y);
 						setEstado(Estado.JUGANDO);
 						contadorParaGanar+=1;
+						this.extender(x,y);
 					} else{
 						this.tablero[x,y].presionado = true;
 						revelaMinas();
@@ -419,7 +418,9 @@ public class Tablero : Object {
 		}
 
 		var parser = new Json.Parser();
-		parser.load_from_data(data);
+		try{
+			parser.load_from_data(data);
+		} catch (GLib.Error e){}
 		var root = parser.get_root().get_object();
 
 		string estado = root.get_string_member("estado");
