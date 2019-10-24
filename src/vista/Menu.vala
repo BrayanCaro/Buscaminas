@@ -39,7 +39,14 @@ public class Menu{
         }
         case "2":
         {
-          print("Falta guardar partida.\n");
+			this.tablero = new Tablero(10, 10, 10);
+			if (this.tablero.cargar()) {
+          		print("Partida cargada exitosamente.\n");
+				return true;
+			} else {
+          		print("Error al cargar partida.\n");
+				this.tablero = null;
+			}
           break;
         }
         case "3":
@@ -123,14 +130,6 @@ public class Menu{
       } else {
               stdout.printf ("\t\t\t\t\tPartida en curso 😁\n");
               tablero.to_string();
-              stdout.printf(mensaje1);
-              string opcion = stdin.read_line()._strip(); 
-              switch(opcion){
-                case "1": tirando = true; break;
-                case "2": stdout.printf ("\t\tproximamentexdxd \n"); break;
-                case "3": salir = true; break;
-                default: stdout.printf("\t\t\033[47m \033[1;30mEntrada invalida\033[0m\n"); break;
-              }
 
               if (this.tablero.getEstado() == Estado.GANADO) {
                 stdout.printf ("\t\t\t\t 😎 \n"+mensaje3);
@@ -138,8 +137,26 @@ public class Menu{
               } else if (this.tablero.getEstado() == Estado.PERDIDO) {
                 stdout.printf ("\t\t\t\t 🤯 \n"+mensaje4);
                 finalizada = true;
-              }
+              } else {
+              	stdout.printf(mensaje1);
+			  }
+
+              string opcion = stdin.read_line()._strip(); 
               if (finalizada) return;
+
+              switch(opcion){
+                case "1": tirando = true; break;
+                case "2":
+						if (tablero.guardar())
+							stdout.printf("Partida guardada...");
+						else
+							stdout.printf("Partida guardada...");
+						break;
+                case "3": salir = true; break;
+                default: stdout.printf("\t\t\033[47m \033[1;30mEntrada invalida\033[0m\n"); break;
+              }
+
+
       }		
 
     } while (!salir);

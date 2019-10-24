@@ -13,7 +13,7 @@ protected errordomain ErrorTipo1{
 }
 
 /* Tablero del buscaminas. */
-public class Tablero {
+public class Tablero : Object {
 	private Celda[,] tablero;
 	private Estado estado;
 	private int filas;
@@ -28,7 +28,7 @@ public class Tablero {
 	const string fondoVerdeIntenso = "\033[0;102m";
 
 	/* Clase interna para crear una celda. */
-	private class Celda{
+	private class Celda : Object {
 		private int _minasAlrededor;
 		private bool _bandera;
 		private bool _mina;
@@ -75,14 +75,14 @@ public class Tablero {
 		public string to_string(){
 			string s = "";
 			if (!presionado && !bandera){
-				s = fondoVerdeIntenso+letraNegra+"[  ]"+reset;
-				//  s = "[?]"+reset;
+				s = fondoVerdeIntenso+letraNegra+"[ ?]"+reset;
+				// s = "[?]"+reset;
 			} else if (presionado && mina){
 				s = fondoVerdeIntenso+letraNegra+"[💣]"+reset;
-				//  s = "[B]"+reset;
+				// s = "[B]"+reset;
 			} else if (bandera){
 				s = fondoVerdeIntenso+letraNegra+"[🚩]"+reset;
-				//  s = "[F]"+reset;
+				// s = "[F]"+reset;
 			} else {
 				if (this._minasAlrededor == 0) s = fondoVerde+letraNegra+"[  ]"+reset;
 				else s = fondoVerde+letraNegra+"[ " + this._minasAlrededor.to_string() + "]"+reset;
@@ -90,7 +90,6 @@ public class Tablero {
 			return s;
 		}
 	}
-
 
 	/* tablero de n x m con k minas */
 	public Tablero(int n, int m, int k) 
@@ -227,6 +226,7 @@ public class Tablero {
 						this.tablero[x,y].presionado = true;
 						revelaMinas();
 						setEstado(Estado.PERDIDO);
+						stdout.printf("aaa\n");
 					}
 				} else{ // No hay una mina en la casilla.
 					this.tablero[x,y].presionado = true;
@@ -343,5 +343,109 @@ public class Tablero {
 			print("\n");
 		}	
 		print("\n"+reset);
+	}
+
+	public bool guardar() {
+		Json.Builder builder = new Json.Builder ();
+		builder.begin_object();
+
+		string estado;
+		if (this.estado == Estado.JUGANDO) estado = "jugando";
+		else if (this.estado == Estado.PERDIDO) estado = "perdido";
+		else estado = "ganado";
+		builder.set_member_name("estado");
+		builder.add_string_value(estado);
+
+		builder.set_member_name("filas");
+		builder.add_int_value(this.filas);
+		builder.set_member_name("columnas");
+		builder.add_int_value(this.columnas);
+		builder.set_member_name("minas");
+		builder.add_int_value(this.minas);
+		builder.set_member_name("contador");
+		builder.add_int_value(this.contadorParaGanar);
+
+		builder.set_member_name("tablero");
+		builder.begin_array();
+		for (int i = 0; i < this.filas; i++) {
+			builder.begin_array();
+			for (int j = 0; j < this.columnas; j++) {
+				Celda c = tablero[i,j];
+				builder.begin_array();
+				builder.add_int_value(c.minasAlrededor);
+				builder.add_boolean_value(c.bandera);
+				builder.add_boolean_value(c.mina);
+				builder.add_boolean_value(c.presionado);
+				builder.end_array();
+			}
+			builder.end_array();
+		}
+		builder.end_array();
+
+		builder.end_object();
+		Json.Generator generator = new Json.Generator();
+		Json.Node root = builder.get_root();
+		generator.set_root(root);
+		string str = generator.to_data(null);
+
+		try {
+			var file = File.new_for_path("./.tablero.json");
+			if (file.query_exists()) file.delete();
+			var dos = new DataOutputStream(file.create(FileCreateFlags.REPLACE_DESTINATION));
+			uint8[] data = str.data;
+			long written = 0;
+			while (written < data.length) { 
+				written += dos.write(data[written:data.length]);
+			}
+		} catch (Error e) {
+			stdout.printf("Error al escribir");
+			return false;
+		}
+		return true;
+	}
+
+	public bool cargar() {
+		var file = File.new_for_path("./.tablero.json");
+		if (!file.query_exists ()) return false;
+		string data = "";
+
+		try {
+			var dis = new DataInputStream(file.read());
+			string line;
+			while ((line = dis.read_line (null)) != null)
+				data += line;
+		} catch (Error e) {
+			return false;
+		}
+
+		var parser = new Json.Parser();
+		parser.load_from_data(data);
+		var root = parser.get_root().get_object();
+
+		string estado = root.get_string_member("estado");
+		if (estado == "jugando") this.estado = Estado.JUGANDO;
+		else if (estado == "perdido") this.estado = Estado.PERDIDO;
+		else this.estado = Estado.GANADO;
+		this.filas = (int)root.get_int_member("filas");
+		this.columnas = (int)root.get_int_member("columnas");
+		this.minas = (int)root.get_int_member("minas");
+		this.contadorParaGanar = (int)root.get_int_member("contador");
+
+		this.tablero = new Celda[this.filas,this.columnas];
+		var minas = root.get_array_member("tablero");
+		for (int i = 0; i < filas; i++) {
+			var fila = minas.get_array_element(i);
+			for (int j = 0; j < columnas; j++) {
+				var celda = fila.get_array_element(j);
+				int alrededor = (int)celda.get_int_element(0);
+				bool bandera = celda.get_boolean_element(1);
+				bool minado = celda.get_boolean_element(2);
+				bool presionado = celda.get_boolean_element(3);
+				this.tablero[i,j] = new Celda(alrededor, minado, presionado,
+					bandera);
+			}
+		}
+
+		return true;
 	}
 }
