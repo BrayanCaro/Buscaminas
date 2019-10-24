@@ -1,6 +1,3 @@
-//  Compilar usando 
-//  valac Tablero.vala 
-//  ./Tablero
 protected enum Estado {
 	GANADO,
 	PERDIDO,
@@ -91,7 +88,11 @@ public class Tablero : Object {
 		}
 	}
 
-	/* tablero de n x m con k minas */
+	/* Tablero de n x m con k minas 
+	* @param n: número de filas del tablero.
+	* @param m: número de columnas del tablero.
+	* @param k: número de minas en el tablero.
+	*/
 	public Tablero(int n, int m, int k) 
 	requires (n>=1)
 	requires (m>=1)
@@ -133,14 +134,14 @@ public class Tablero : Object {
 	}
 	
 	/* Obtiene las filas del tablero.
-	@return número de filas.
+	* @return número de filas.
 	*/
 	public int obtenerFilas(){
 		return this.filas;
 	}
 	
 	/* Obtiene las columnas del tablero.
-	@return número de columnas.
+	* @return número de columnas.
 	*/
 	public int obtenerColumnas(){
 		return this.columnas;
@@ -158,7 +159,6 @@ public class Tablero : Object {
 	/* Cambia las bombas de lugar, omite el lugar x,y.
 	* @param x: coordenada en el eje x.
 	* @param y: coordenada en el eje y.
-	* @param k: número de minas.
 	*/
 	private void cambiaMinas(int x, int y){
 		bool bandera = true;
@@ -183,6 +183,7 @@ public class Tablero : Object {
 	/* Comprueba que una casilla sea válida, es decir, que esté dentro del rango de filas y columnas y sea mayor o igual que 0.
 	* @param x: coordenada en el eje x.
 	* @param y: coordenada en el eje y.
+	* @return true si la casilla es válida, false de lo contrario.
 	*/
 	private bool casillaValida(int x, int y){
 		bool valida = true;
@@ -245,6 +246,12 @@ public class Tablero : Object {
 		return false;
 	}
 
+
+	/* Actualiza los contadores de la celdas acorde a las minas a su al rededor
+	* @param x: coordenada en el eje x de la celda.
+	* @param y: coordenada en el eje  y de la celda.
+	* @return número de minas a su al rededor.
+	*/
 	private int actualizaMinasAlrededor(int x, int y) {
 		int total = 0;
 		int[,] coords = { {x, y+1}, {x-1, y}, {x+1, y}, {x, y-1},
@@ -260,8 +267,11 @@ public class Tablero : Object {
 		return total;
 	}
 
-	/* extiende al presionar una casilla a todas las vecinas que no esten ya
-	 * presionadas o con alguna mina o bandera */
+	/* Extiende al presionar una casilla a todas las vecinas que no esten ya
+	 * presionadas o con alguna mina o bandera 
+	 * @param x: coordenada en el eje x.
+	 * @param y: coordenada en el eje y.
+	 * */
 	private void extender(int x, int y) {
 		if (this.tablero[x,y].minasAlrededor > 0)
 			return;
@@ -344,6 +354,9 @@ public class Tablero : Object {
 		print("\n"+reset);
 	}
 
+	/* Guarda el tablero.
+	* @return true si ha guardado el tablero, false en caso contrario.
+	*/
 	public bool guardar() {
 		Json.Builder builder = new Json.Builder ();
 		builder.begin_object();
@@ -403,6 +416,9 @@ public class Tablero : Object {
 		return true;
 	}
 
+	/* Carga el tablero guardado.
+	* @return true si logra cargarlo, false en caso contrario.
+	*/
 	public bool cargar() {
 		var file = File.new_for_path("./.tablero.json");
 		if (!file.query_exists ()) return false;

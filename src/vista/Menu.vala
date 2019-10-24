@@ -1,22 +1,18 @@
 public class Menu{
-  private Tablero tablero; // Se sustituye por un objeto de tipo tablero.
+  private Tablero tablero; 
   //  Dificultad 
   //    Facil     11*6 con 10 bombas 
   //    Media     18*10 con entre 35 bombas 
   //    Dificil   25*14 con 75 bombas 
 
-    /*
-    * Crea un menú.
-    */
+    /* Crea un menú. */
   public Menu(){
     stdout.printf ("-");
     while (bienvenida())
     jugar();
   }
 
-  /*
-  * Muestra un menú de bienvenida.
-  */
+  /* Muestra un menú de bienvenida. */
   private bool bienvenida(){
 	while (true) {
     stdout.printf("\t\t\t\t\tBuscaminas\n\t\tEscoge una opción: \n\t\t1. Jugar partida nueva.\n\t\t\ta)Fácil: 11x6 con 10 bombas.\n\t\t\tb)Medio: 18x10 con 35 bombas.\n\t\t\tc)Difícil: 25x14 con 75 bombas.\n   \t\tEn caso de jugar una nueva partida escribe 1x, con x el nivel de dificultad del juego.\n\t\t2. Continuar con la partida.\n\t\t3. Salir.\n"); string opcion = stdin.read_line()._strip();
@@ -60,8 +56,7 @@ public class Menu{
     }
   }
 
-  /*
-  * Verifica que las opciones de dificultad del juego sean correctas.
+  /* Verifica que las opciones de dificultad del juego sean correctas.
   * @param dificultad: opción del menú (1a,1b,1c).
   * @return dificultad del juego (a,b,c).
   */
@@ -93,6 +88,7 @@ public class Menu{
     return dificultadJuego;
   }
 
+  /* Juega una partida de buscaminas. */
   private void jugar() {
     bool salir = false;
     bool tirando = false;
@@ -151,22 +147,19 @@ public class Menu{
               switch(opcion){
                 case "1": tirando = true; break;
                 case "2":
-						if (tablero.guardar())
-							stdout.printf("\t\t\tPartida guardada...");
-						else
-							stdout.printf("\t\t\tPartida guardada...");
-						break;
+                  if (tablero.guardar())
+                    stdout.printf("\t\t\tPartida guardada...");
+                  else
+                    stdout.printf("\t\t\tPartida guardada...");
+                  break;
                 case "3": salir = true; break;
                 default: stdout.printf("\t\t\033[47m \033[1;30mEntrada invalida\033[0m\n"); break;
               }
-
-
       }		
-
     } while (!salir);
   }
 
   public static void main (){
-    var manuPrueba = new Menu();
+    var menu = new Menu();
   }  
 }
